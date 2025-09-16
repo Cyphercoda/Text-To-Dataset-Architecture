@@ -443,6 +443,320 @@ API_Structure:
     GET /system/status:
       Description: Service status page data
       Response: { services[], incidents[], maintenance_windows[] }
+  
+  Mobile_Optimization_APIs:
+    GET /api/mobile/dashboard-summary:
+      Description: Lightweight dashboard for mobile devices
+      Query: { user_id, condensed? }
+      Response: { 
+        essential_kpis: { documents_count, processing_status, recent_activity_count },
+        quick_actions: [{ action, label, icon }],
+        notifications_count: unread_count,
+        processing_queue_position?: number
+      }
+      Rate_Limit: 120 requests/hour
+      Cache_TTL: 30 seconds
+    
+    POST /api/mobile/quick-upload:
+      Description: Optimized mobile upload with chunking
+      Content_Type: multipart/form-data
+      Features:
+        - Chunk-based upload (1MB chunks)
+        - Background processing queue
+        - Offline sync support
+        - Progress resumption
+      Request: FormData with file chunks + metadata
+      Response: { 
+        upload_id, 
+        chunk_received, 
+        total_chunks, 
+        processing_queued,
+        estimated_completion 
+      }
+      Rate_Limit: 50 uploads/hour (free), 500 uploads/hour (paid)
+    
+    GET /api/mobile/quick-status:
+      Description: Fast status check for mobile apps
+      Query: { jobs[], notifications?, system? }
+      Response: {
+        jobs_status: { job_id: status_summary },
+        unread_notifications: count,
+        system_status: 'operational' | 'degraded' | 'down',
+        next_poll_interval: seconds
+      }
+      Rate_Limit: 300 requests/hour
+      Cache_TTL: 10 seconds
+    
+    GET /api/mobile/offline-data:
+      Description: Essential data for offline functionality
+      Query: { last_sync_timestamp }
+      Response: {
+        user_profile: essential_profile_data,
+        recent_documents: [{ id, name, status, thumbnail? }],
+        cached_results: [{ job_id, summary, completion_date }],
+        sync_token: next_sync_token
+      }
+      Rate_Limit: 60 requests/hour
+      Cache_TTL: 5 minutes
+    
+    POST /api/mobile/background-sync:
+      Description: Sync data when app comes online
+      Request: {
+        sync_token,
+        queued_actions: [{ action, data, timestamp }],
+        device_info: { platform, version, connection_type }
+      }
+      Response: {
+        sync_success: boolean,
+        conflicts: [{ action_id, resolution }],
+        updated_data: incremental_updates,
+        next_sync_token
+      }
+      Rate_Limit: 30 syncs/hour
+    
+    WebSocket /api/mobile/live-updates:
+      Description: Lightweight real-time updates for mobile
+      Events: 
+        - job_progress: { job_id, progress, eta }
+        - notification_summary: { count, priority_level }
+        - system_alert: { level, message, action_required }
+      Connection_Limits: 2 concurrent per user
+      Heartbeat_Interval: 60 seconds
+    
+    GET /api/mobile/app-config:
+      Description: Mobile app configuration and feature flags
+      Response: {
+        features_enabled: feature_flags,
+        upload_limits: { max_size, concurrent_uploads, formats },
+        ui_config: { theme, layout_preferences },
+        push_notification_topics: available_topics,
+        update_available?: { version, required, changelog }
+      }
+      Rate_Limit: 10 requests/hour
+      Cache_TTL: 1 hour
+  
+  Chat_Assistant:
+    POST /chat/sessions:
+      Description: Create new AI chat session
+      Request: { name?, document_context?, initial_message? }
+      Response: { session_id, created_at, ai_greeting }
+      Rate_Limit: 10 sessions/hour
+    
+    GET /chat/sessions:
+      Description: List user chat sessions
+      Query: { page, limit, active_only }
+      Response: { sessions[], pagination, total_count }
+    
+    POST /chat/sessions/{id}/messages:
+      Description: Send message to AI assistant
+      Request: { message, attachments?, context_documents? }
+      Response: { message_id, ai_response, processing_time, suggestions? }
+      Rate_Limit: 100 messages/hour (free), 1000 messages/hour (paid)
+    
+    GET /chat/sessions/{id}/messages:
+      Description: Get chat conversation history
+      Query: { page, limit, message_type? }
+      Response: { messages[], session_info, total_messages }
+    
+    DELETE /chat/sessions/{id}:
+      Description: Delete chat session
+      Response: { success, messages_deleted }
+    
+    POST /chat/sessions/{id}/export:
+      Description: Export chat conversation
+      Request: { format, include_context? }
+      Response: { download_url, expires_at, file_size }
+    
+    WebSocket /chat/sessions/{id}/live:
+      Description: Real-time chat communication
+      Events: message_received, ai_typing, processing_complete, error_occurred
+  
+  Analytics_Dashboard:
+    GET /analytics/dashboard:
+      Description: Get comprehensive dashboard data
+      Query: { period, granularity, filters? }
+      Response: { 
+        kpis: { documents_processed, projects_count, accuracy_avg, cost_saved },
+        processing_volume: time_series_data,
+        entity_distribution: chart_data,
+        export_activity: chart_data,
+        system_performance: real_time_metrics
+      }
+      Rate_Limit: 60 requests/hour
+    
+    GET /analytics/processing-volume:
+      Description: Get processing volume trends over time
+      Query: { period, granularity, document_types?, user_filter? }
+      Response: { time_series[], total_volume, growth_rate, trends }
+    
+    GET /analytics/entity-distribution:
+      Description: Get entity type distribution analytics
+      Query: { period, document_ids?, confidence_threshold? }
+      Response: { entity_types[], percentages[], total_entities, trends }
+    
+    GET /analytics/export-activity:
+      Description: Get dataset export activity metrics
+      Query: { period, format_filter?, destination_filter? }
+      Response: { export_counts[], formats_breakdown[], total_exports, popular_formats }
+    
+    GET /analytics/cost-tracking:
+      Description: Get detailed cost analytics and savings
+      Query: { period, cost_breakdown?, projection_days? }
+      Response: { daily_costs[], total_spend, savings_calculated, cost_projections, optimization_suggestions }
+    
+    GET /analytics/quality-metrics:
+      Description: Get quality score trends and analysis
+      Query: { period, metric_types?, document_filter? }
+      Response: { quality_trends[], average_scores, improvement_areas, quality_distribution }
+    
+    GET /analytics/user-engagement:
+      Description: Get user activity and engagement metrics
+      Query: { period, engagement_type? }
+      Response: { active_users, feature_usage[], session_duration, retention_rates }
+  
+  Project_Management:
+    POST /projects:
+      Description: Create new project workspace
+      Request: { name, description?, settings, team_members?, default_config? }
+      Response: { project_id, created_at, invite_links? }
+      Rate_Limit: 20 projects/day
+    
+    GET /projects:
+      Description: List user projects with access permissions
+      Query: { page, limit, status?, role_filter? }
+      Response: { projects[], permissions[], pagination }
+    
+    GET /projects/{id}:
+      Description: Get detailed project information
+      Response: { project_info, documents[], team_members[], analytics_summary, recent_activity[] }
+    
+    PUT /projects/{id}:
+      Description: Update project settings and information
+      Request: { name?, description?, settings?, team_changes? }
+      Response: { updated_project, change_log }
+    
+    POST /projects/{id}/documents:
+      Description: Add documents to project workspace
+      Request: { document_ids[], folder_structure?, processing_config? }
+      Response: { added_documents[], project_updated, processing_started? }
+    
+    DELETE /projects/{id}/documents/{doc_id}:
+      Description: Remove document from project
+      Response: { success, project_updated }
+    
+    GET /projects/{id}/analytics:
+      Description: Get project-specific analytics and insights
+      Response: { project_metrics, document_stats, processing_summary, team_activity, cost_breakdown }
+    
+    POST /projects/{id}/invite:
+      Description: Invite team members to project
+      Request: { emails[], role, message? }
+      Response: { invites_sent[], pending_invitations[] }
+  
+  Advanced_Export_Integration:
+    POST /exports/integrations/huggingface:
+      Description: Export dataset directly to HuggingFace Hub
+      Request: { dataset_id, repo_name, visibility, license?, readme_content?, token }
+      Response: { export_status, repo_url, tracking_id, hub_dataset_url }
+      Rate_Limit: 10 exports/day (free), 100 exports/day (paid)
+    
+    POST /exports/integrations/github:
+      Description: Export dataset to GitHub repository
+      Request: { dataset_id, repo_url, branch?, commit_message?, token }
+      Response: { commit_hash, export_status, github_url }
+    
+    POST /exports/integrations/kaggle:
+      Description: Export dataset to Kaggle
+      Request: { dataset_id, dataset_title, description, license?, tags[] }
+      Response: { kaggle_dataset_url, export_status }
+    
+    POST /exports/scheduled:
+      Description: Create automated scheduled export
+      Request: { dataset_config, cron_schedule, destination, format, notification_settings }
+      Response: { schedule_id, next_run, validation_status }
+    
+    GET /exports/scheduled:
+      Description: List and manage scheduled exports
+      Response: { scheduled_exports[], next_runs[], success_rates[] }
+    
+    PUT /exports/scheduled/{id}:
+      Description: Update scheduled export configuration
+      Request: { schedule?, destination?, enabled? }
+      Response: { updated_schedule, next_run }
+    
+    GET /exports/history:
+      Description: Get comprehensive export history
+      Query: { page, limit, status?, destination?, date_range? }
+      Response: { exports[], success_rate, total_size, popular_destinations }
+  
+  Notifications_System:
+    GET /notifications:
+      Description: Get user notifications with filtering
+      Query: { unread_only?, type_filter?, limit?, page? }
+      Response: { notifications[], unread_count, total_count }
+    
+    PUT /notifications/{id}/read:
+      Description: Mark notification as read
+      Response: { success, updated_at }
+    
+    PUT /notifications/mark-all-read:
+      Description: Mark all notifications as read
+      Response: { success, marked_count }
+    
+    POST /notifications/preferences:
+      Description: Update notification preferences
+      Request: { email_enabled, sms_enabled, push_enabled, types_config[] }
+      Response: { updated_preferences, validation_status }
+    
+    GET /notifications/preferences:
+      Description: Get current notification preferences
+      Response: { preferences, available_types[], delivery_methods[] }
+    
+    WebSocket /notifications/live:
+      Description: Real-time notification stream
+      Events: new_notification, processing_complete, system_alert, team_update
+  
+  Advanced_Search_Filtering:
+    GET /search/documents:
+      Description: Advanced full-text document search
+      Query: { q, filters, facets, sort, highlight?, page, limit }
+      Response: { results[], facets[], total_count, search_time, suggestions[] }
+      Rate_Limit: 1000 searches/day
+    
+    GET /search/entities:
+      Description: Search across all extracted entities
+      Query: { entity_text, types[], confidence_min, source_docs?, fuzzy? }
+      Response: { entities[], source_documents[], aggregations, related_entities[] }
+    
+    GET /search/content:
+      Description: Semantic content search across processed text
+      Query: { semantic_query, similarity_threshold, document_filter? }
+      Response: { matches[], similarity_scores[], context_snippets[] }
+    
+    POST /search/save-query:
+      Description: Save search query for quick access
+      Request: { query_name, search_params, alert_enabled? }
+      Response: { saved_query_id, alert_schedule? }
+  
+  Batch_Operations:
+    POST /batch/documents/process:
+      Description: Batch process multiple documents with same config
+      Request: { document_ids[], processing_config, priority?, notification_webhook? }
+      Response: { batch_job_id, estimated_completion, cost_estimate, queue_position }
+    
+    GET /batch/jobs/{id}:
+      Description: Get batch processing job status
+      Response: { job_status, completed_count, failed_count, progress_percentage, eta }
+    
+    POST /batch/datasets/generate:
+      Description: Generate multiple datasets in parallel
+      Request: { dataset_configs[], output_formats[], quality_thresholds[] }
+      Response: { batch_generation_id, queue_position, estimated_completion }
+    
+    POST /batch/exports:
+      Description: Batch export multiple datasets
+      Request: { dataset_ids[], export_configs[], destinations[] }
+      Response: { batch_export_id, individual_tracking_ids[], estimated_completion }
 ```
 
 **Rate Limiting & Security:**

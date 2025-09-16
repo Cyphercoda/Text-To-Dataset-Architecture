@@ -1,0 +1,143 @@
+{
+  "short_name": "TextDataset",
+  "name": "Text-to-Dataset Platform",
+  "description": "AI-powered platform for converting text documents into training-ready datasets for LLM development",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "badge-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "badge monochrome"
+    }
+  ],
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "theme_color": "#1976d2",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["productivity", "business", "developer"],
+  "screenshots": [
+    {
+      "src": "screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard view showing analytics and processing status"
+    },
+    {
+      "src": "screenshot-narrow.png", 
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile dashboard with quick actions"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload Documents",
+      "short_name": "Upload",
+      "description": "Quickly upload documents for processing",
+      "url": "/upload",
+      "icons": [
+        {
+          "src": "shortcut-upload.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Chat Assistant",
+      "short_name": "Chat",
+      "description": "Open AI chat assistant",
+      "url": "/chat",
+      "icons": [
+        {
+          "src": "shortcut-chat.png",
+          "sizes": "96x96", 
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "short_name": "Analytics",
+      "description": "View processing analytics",
+      "url": "/analytics",
+      "icons": [
+        {
+          "src": "shortcut-analytics.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/upload",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "documents",
+          "accept": [
+            ".pdf",
+            ".doc",
+            ".docx", 
+            ".txt",
+            ".rtf",
+            ".md"
+          ]
+        }
+      ]
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/upload",
+      "accept": {
+        "text/*": [".txt", ".md", ".rtf"],
+        "application/pdf": [".pdf"],
+        "application/msword": [".doc"],
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "textdataset",
+      "url": "/share?data=%s"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": ["focus-existing", "auto"]
+  }
+}

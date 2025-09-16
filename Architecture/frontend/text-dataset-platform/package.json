@@ -1,0 +1,160 @@
+{
+  "name": "text-dataset-platform",
+  "version": "1.0.0",
+  "description": "AI-powered text-to-dataset platform with real-time processing and analytics",
+  "keywords": ["ai", "nlp", "dataset", "text-processing", "machine-learning", "analytics"],
+  "author": "Text Dataset Platform Team",
+  "license": "MIT",
+  "homepage": "https://textdataset.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/textdataset/frontend.git"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.1",
+    "typescript": "^4.9.5",
+    "@types/node": "^18.14.6",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "zustand": "^4.3.6",
+    "@tanstack/react-query": "^4.26.1",
+    "axios": "^1.3.4",
+    "react-hook-form": "^7.43.5",
+    "zod": "^3.20.6",
+    "@hookform/resolvers": "^2.9.11",
+    "react-hot-toast": "^2.4.0",
+    "chart.js": "^4.2.1",
+    "react-chartjs-2": "^5.2.0",
+    "date-fns": "^2.29.3",
+    "lucide-react": "^0.323.0",
+    "clsx": "^1.2.1",
+    "tailwind-merge": "^1.10.0",
+    "framer-motion": "^10.3.0",
+    "react-dropzone": "^14.2.3",
+    "react-virtualized-auto-sizer": "^1.0.20",
+    "react-window": "^1.8.8",
+    "@types/react-window": "^1.8.5",
+    "react-intersection-observer": "^9.4.3",
+    "workbox-window": "^6.5.4",
+    "aws-sdk": "^2.1329.0",
+    "amazon-cognito-identity-js": "^6.1.2",
+    "@aws-sdk/client-s3": "^3.278.0",
+    "@aws-sdk/client-cloudwatch": "^3.278.0",
+    "@aws-sdk/client-xray": "^3.278.0",
+    "web-vitals": "^3.1.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^3.1.0",
+    "vite": "^4.1.0",
+    "vite-plugin-pwa": "^0.14.4",
+    "vite-tsconfig-paths": "^4.0.5",
+    "tailwindcss": "^3.2.7",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/typography": "^0.5.9",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "eslint": "^8.35.0",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-config-prettier": "^8.6.0",
+    "prettier": "^2.8.4",
+    "prettier-plugin-tailwindcss": "^0.2.3",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/user-event": "^14.4.3",
+    "vitest": "^0.28.5",
+    "jsdom": "^21.1.0",
+    "@vitest/ui": "^0.28.5",
+    "happy-dom": "^8.9.0",
+    "msw": "^1.1.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
+    "rimraf": "^4.4.0",
+    "serve": "^14.2.0",
+    "concurrently": "^7.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.2",
+    "@commitlint/cli": "^17.4.4",
+    "@commitlint/config-conventional": "^17.4.4",
+    "semantic-release": "^20.1.0",
+    "vite-bundle-analyzer": "^0.7.0",
+    "rollup-plugin-visualizer": "^5.9.0"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "tsc && vite build",
+    "build:analyze": "vite build --mode analyze",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "serve": "serve -s dist -l 3000",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:run": "vitest run",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint src --ext ts,tsx --fix",
+    "format": "prettier --write src/**/*.{ts,tsx,js,jsx,css,md,json}",
+    "format:check": "prettier --check src/**/*.{ts,tsx,js,jsx,css,md,json}",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist node_modules/.vite",
+    "prepare": "husky install",
+    "postinstall": "npm run prepare",
+    "release": "semantic-release",
+    "health-check": "curl -f http://localhost:3000/health || exit 1",
+    "audit": "npm audit --audit-level=moderate",
+    "outdated": "npm outdated",
+    "update-deps": "npm update",
+    "docker:build": "docker build -t text-dataset-platform .",
+    "docker:run": "docker run -p 3000:3000 text-dataset-platform",
+    "aws:deploy": "npm run build && aws s3 sync dist/ s3://your-bucket-name --delete",
+    "size-check": "npm run build && bundlesize"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,jsx,css,md,json}": [
+      "prettier --write"
+    ]
+  },
+  "bundlesize": [
+    {
+      "path": "./dist/assets/*.js",
+      "maxSize": "500kb"
+    },
+    {
+      "path": "./dist/assets/*.css",
+      "maxSize": "50kb"
+    }
+  ],
+  "msw": {
+    "workerDirectory": "public"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  }
+}
